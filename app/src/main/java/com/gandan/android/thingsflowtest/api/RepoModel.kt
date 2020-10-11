@@ -1,6 +1,4 @@
-package com.gandan.android.thingsflowtest
-
-import com.google.gson.annotations.SerializedName
+package com.gandan.android.thingsflowtest.api
 
 data class RepoModel(
     val number: Int,

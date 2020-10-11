@@ -1,5 +1,6 @@
-package com.gandan.android.thingsflowtest
+package com.gandan.android.thingsflowtest.di
 
+import com.gandan.android.thingsflowtest.api.APIService
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit

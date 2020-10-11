@@ -1,4 +1,4 @@
-package com.gandan.android.thingsflowtest
+package com.gandan.android.thingsflowtest.api
 
 import io.reactivex.Single
 import retrofit2.http.GET

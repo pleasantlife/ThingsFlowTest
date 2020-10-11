@@ -1,4 +1,4 @@
-package com.gandan.android.thingsflowtest
+package com.gandan.android.thingsflowtest.view
 
 import android.content.Context
 import android.content.Intent
@@ -7,25 +7,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.gandan.android.thingsflowtest.R
+import com.gandan.android.thingsflowtest.api.RepoModel
+import com.gandan.android.thingsflowtest.model.RepoOrgModel
 import kotlinx.android.synthetic.main.image_item.view.*
 import kotlinx.android.synthetic.main.repo_item.view.*
 
 class MainRecyclerAdapter(private val requestManager: RequestManager, private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val repoViewType = -1
-    val imageViewType = -2
+    private val repoViewType = -1
+    private val imageViewType = -2
+    private val bannerPosition = 4
 
-    var repoItemList = ArrayList<RepoModel>()
+    private var repoItemList = ArrayList<RepoModel>()
+    private lateinit var repoOrgModel: RepoOrgModel
 
     fun setItemList(itemList: ArrayList<RepoModel>) {
         this.repoItemList = itemList
         notifyDataSetChanged()
     }
 
+    fun setRepoOrgModel(repoOrgModel: RepoOrgModel) {
+        this.repoOrgModel = repoOrgModel
+    }
+
     override fun getItemViewType(position: Int): Int {
-        return if(position == 4) {
+        return if(position == bannerPosition) {
             imageViewType
         } else {
             repoViewType
@@ -57,12 +65,19 @@ class MainRecyclerAdapter(private val requestManager: RequestManager, private va
     inner class RepoHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(repoModel: RepoModel) {
             itemView.issueText.text = context.getString(R.string.issue_list, repoModel.number, repoModel.title)
+            itemView.setOnClickListener {
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("org", repoOrgModel.org)
+                intent.putExtra("repo", repoOrgModel.repo)
+                intent.putExtra("number", repoModel.number)
+                context.startActivity(intent)
+            }
         }
     }
 
     inner class ImageHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-        val thingsFlowWebUrl = "https://thingsflow.com/ko/home"
+        private val thingsFlowWebUrl = "https://thingsflow.com/ko/home"
 
         fun bind(){
             requestManager.load(R.drawable.main_logo)
