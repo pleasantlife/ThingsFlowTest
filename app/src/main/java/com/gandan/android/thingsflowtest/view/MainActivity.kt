@@ -1,8 +1,10 @@
 package com.gandan.android.thingsflowtest.view
 
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
@@ -27,15 +29,23 @@ class MainActivity: AppCompatActivity() {
     @Inject
     lateinit var issueListDataRepository: IssueListDataRepository
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    lateinit var editor: SharedPreferences.Editor
+
     private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
     private lateinit var alertDialog: AlertDialog
-    private var repoOrgModel = RepoOrgModel("google", "dagger")
+    private lateinit var repoOrgModel: RepoOrgModel
     private var beforeRepoOrgModel = RepoOrgModel("google", "dagger")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as BaseApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val org = sharedPreferences.getString("org", "google")?: "google"
+        val repo = sharedPreferences.getString("repo", "dagger")?: "dagger"
+        repoOrgModel = RepoOrgModel(org, repo)
         mainRecyclerAdapter =
             MainRecyclerAdapter(
                 Glide.with(this),
@@ -54,6 +64,7 @@ class MainActivity: AppCompatActivity() {
         viewModel.issueList.observe(this, Observer {
             mainRecyclerAdapter.setItemList(it)
             mainRecyclerAdapter.setRepoOrgModel(repoOrgModel)
+            repoRecyclerView.visibility = View.VISIBLE
         })
 
         viewModel.networkStatusData.observe(this, Observer {
@@ -63,6 +74,9 @@ class MainActivity: AppCompatActivity() {
                 setView()
             } else if (it === "Success"){
                 beforeRepoOrgModel = repoOrgModel
+                editor.putString("org", repoOrgModel.org)
+                editor.putString("repo", repoOrgModel.repo)
+                editor.apply()
             }
         })
 
@@ -75,6 +89,7 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun setView() {
+        repoRecyclerView.visibility = View.GONE
         viewModel.setRepoOrgData(repoOrgModel)
         repoTitle.text = getString(R.string.repo_title, repoOrgModel.org, repoOrgModel.repo)
     }
