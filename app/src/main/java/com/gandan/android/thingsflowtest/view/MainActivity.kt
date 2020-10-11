@@ -22,13 +22,10 @@ import javax.inject.Inject
 
 class MainActivity: AppCompatActivity() {
 
-
     @Inject
     lateinit var viewModel: MainViewModel
-
     @Inject
     lateinit var issueListDataRepository: IssueListDataRepository
-
     @Inject
     lateinit var sharedPreferences: SharedPreferences
     @Inject
@@ -37,7 +34,7 @@ class MainActivity: AppCompatActivity() {
     private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
     private lateinit var alertDialog: AlertDialog
     private lateinit var repoOrgModel: RepoOrgModel
-    private var beforeRepoOrgModel = RepoOrgModel("google", "dagger")
+    private lateinit var beforeRepoOrgModel: RepoOrgModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as BaseApplication).appComponent.inject(this)
